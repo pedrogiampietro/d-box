@@ -29,13 +29,13 @@ class DropBoxController {
     uploadTask(files) {
 
         let promises = [];
-        
+
         [...files].forEach(file => {
 
             promises.push(new Promise((resolve, reject) => {
 
                 let ajax = new XMLHttpRequest()
-                ajax.open('/post', '/upload')
+                ajax.open('POST', '/upload')
                 ajax.onload = event => {
 
                     try {
