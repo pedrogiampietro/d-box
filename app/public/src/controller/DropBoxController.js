@@ -9,7 +9,7 @@ class DropBoxController {
         this.namefileEl = this.snackModalEl.querySelector('.filename')
         this.timeleftEl = this.snackModalEl.querySelector('.timeleft')
 
-        this.connectFirebase();
+        this.connectFirebase()
         this.initEvents()
         
     }
@@ -40,13 +40,31 @@ class DropBoxController {
 
         this.inputFilesEl.addEventListener('change', event => {
 
-            this.uploadTask(event.target.files)
+            this.uploadTask(event.target.files).then(responses => {
+
+                responses.forEach(resp => {
+
+                    console.log(resp.files['input-file'])
+
+                    this.getFirebaseRef().push().set(resp.files['input-file'])
+
+                })
+
+                this.modalShow(false)
+
+            })
 
             this.modalShow()
 
             this.inputFilesEl.value = ''
 
         })
+    }
+
+    getFirebaseRef() {
+
+        return firebase.database().ref('files')
+
     }
 
     modalShow(show = true) {
@@ -66,7 +84,6 @@ class DropBoxController {
                 ajax.open('POST', '/upload');
                 ajax.onload = event => {
 
-                    this.modalShow(false)
 
                     try {
 
@@ -79,7 +96,6 @@ class DropBoxController {
                 }
                 ajax.onerror = event => {
 
-                    his.modalShow(false)
                     reject(event)
 
                 }
