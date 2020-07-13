@@ -8,9 +8,11 @@ class DropBoxController {
         this.progressBarEl = this.snackModalEl.querySelector('.mc-progress-bar-fg')
         this.namefileEl = this.snackModalEl.querySelector('.filename')
         this.timeleftEl = this.snackModalEl.querySelector('.timeleft')
+        this.listFilesEl = document.querySelector('#list-of-files-and-directories')
 
         this.connectFirebase()
         this.initEvents()
+        this.readFiles()
         
     }
 
@@ -40,7 +42,7 @@ class DropBoxController {
 
         this.inputFilesEl.addEventListener('change', event => {
 
-            inputFilesEl.disabled = true
+            this.btnSendFileEl.disabled = true
 
             this.uploadTask(event.target.files).then(responses => {
 
@@ -58,7 +60,7 @@ class DropBoxController {
 
                 this.uploadComplete()
                 console.error(err)
-                
+
             })
 
             this.modalShow()
@@ -72,7 +74,7 @@ class DropBoxController {
 
         this.modalShow(false)
         this.inputFilesEl.value = ''
-        inputFilesEl.disabled = false
+        this.btnSendFilesEl.disabled = false
 
     }
 
@@ -369,16 +371,36 @@ class DropBoxController {
 
     }
 
-    getFileView(file) {
+    getFileView(file, key) {
 
-        return `
+        let li = document.createElement('li')
 
-            <li>
-                ${this.getFileIconView(file)}
-                <div class="name text-center">${file.name}</div>
-            </li>    
+        li.dataset.key = key
 
-        `
+        li.innerHTML =`
+            
+        ${this.getFileIconView(file)}
+        <div class="name text-center">${file.name}</div>
+      
+        `;
 
+        return li
+
+
+    }
+
+    readFiles() {
+         
+        this.getFirebaseRef().on('value', snapshot => {
+
+            this.listFilesEl.innerHTML = ''
+
+            snapshot.forEach(snapshotItem => {
+                let key = snapshotItem.key
+                let data = snapshotItem.val()
+
+                this.listFilesEl.appendChild(this.getFileView(data, key))
+            })
+        })
     }
 }
