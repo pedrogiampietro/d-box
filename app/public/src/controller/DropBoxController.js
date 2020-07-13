@@ -384,6 +384,8 @@ class DropBoxController {
       
         `;
 
+        this.initEventsLi(li)
+
         return li
 
 
@@ -401,6 +403,13 @@ class DropBoxController {
 
                 this.listFilesEl.appendChild(this.getFileView(data, key))
             })
+        })
+    }
+
+    initEventsLi(li) {
+
+        li.addEventListener('click', e => {
+            li.classList.toggle('selected')
         })
     }
 }
