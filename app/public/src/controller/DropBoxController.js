@@ -401,7 +401,7 @@ class DropBoxController {
                 let key = snapshotItem.key
                 let data = snapshotItem.val()
 
-                this.listFilesEl.appendChild(this.getFileView(data, key))
+                this.listFilesEl.appendChild(this.getFileView(data, key)) 
             })
         })
     }
@@ -409,6 +409,40 @@ class DropBoxController {
     initEventsLi(li) {
 
         li.addEventListener('click', e => {
+
+            if (e.shiftKey) {
+                let firstLi = this.listFilesEl.querySelector('.selected')
+
+                if (firstLi) {
+                    let indexStart
+                    let indexEnd
+                    let lis = li.parentElement.childNodes
+
+                    lis.forEach((el, index) => {
+                        if (firstLi === el) indexStart = index
+                        if (li === el) indexEnd = index
+                    })
+
+                    let index = [indexStart, indexEnd].sort()
+
+                    lis.forEach((el, i) => {
+
+                        if (i >= index[0] && i <= index[1]) {
+                            el.classList.add('selected')
+                        }
+                    })
+
+                    return true
+                }
+
+            }
+
+            if (!e.ctrlKey) { 
+                this.listFilesEl.querySelectorAll('li.selected').forEach(el => {
+                    el.classList.remove('selected')
+                })
+            }
+
             li.classList.toggle('selected')
         })
     }
